@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model pet_types {
+  pet_type_id Int    @id @default(autoincrement())
+  type        String @db.VarChar(30)
+  pets        pets[]
+}
+
+model pets {
+  pet_id      Int        @id @default(autoincrement())
+  name        String     @db.VarChar(30)
+  user_id     Int?
+  birthday    DateTime?  @db.Timestamp(6)
+  pet_type_id Int?
+  pet_types   pet_types? @relation(fields: [pet_type_id], references: [pet_type_id], onDelete: Cascade, onUpdate: NoAction)
+  users       users?     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  user_id   Int       @id @default(autoincrement())
+  username  String    @unique @db.VarChar(25)
+  email     String    @unique @db.VarChar(50)
+  full_name String    @db.VarChar(100)
+  birthday  DateTime? @db.Timestamp(6)
+  pets      pets[]
+}
